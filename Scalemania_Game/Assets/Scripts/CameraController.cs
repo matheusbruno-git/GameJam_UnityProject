@@ -4,24 +4,35 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [Header("References")]
-    public Transform orientation;
-    public Transform player;
-    public Transform playerObj;
-    public Rigidbody rb;
+    public GameObject playerModel;
+    public GameObject normalCam;
+    public GameObject shootingCam;
+    public GameObject cam;
 
-    public float rotationSpeed;
+    bool isAiming;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     void Update()
     {
-        Vector3 viewDir = player.position = new Vector3(transform.position.z, player.position.y, transform.position.z);
-        orientation.forward = viewDir.normalized;
+        float camY = cam.transform.rotation.eulerAngles.y;
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        Vector3 inputDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        isAiming = Input.GetMouseButton(1);
 
-        if(inputDir != Vector3.zero)
-            playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+        if(isAiming)
+        {
+            playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, Quaternion.Euler(0, camY, 0), Time.deltaTime * 100);
+            normalCam.SetActive(false);
+            shootingCam.SetActive(true);
+        }
+        else
+        {
+            normalCam.SetActive(true);
+            shootingCam.SetActive(false);
+        }
     }
 }

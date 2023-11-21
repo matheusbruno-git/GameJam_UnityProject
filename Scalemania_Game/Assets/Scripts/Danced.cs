@@ -1,10 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Danced : MonoBehaviour
 {
+    private Mesh mesh;
+
+    public Text densityCounter;
+    public Text massCounter;
+    public Text volumeCounter;
     public Rigidbody rb;
+    public float mass;
+
     float SignedVolumeOfTriangle(Vector3 p1, Vector3 p2, Vector3 p3)
     {
         float v321 = p3.x * p2.y * p1.z;
@@ -31,17 +39,23 @@ public class Danced : MonoBehaviour
         return Mathf.Abs(volume);
     }
 
-    Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
-
     void Start()
     {
+        mesh = GetComponent<MeshFilter>().sharedMesh;
         rb = GetComponent<Rigidbody>();
-        float mass = rb.mass;
-
+        mass = rb.mass;
     }
 
     void Update()
     {
-        float density = mass / VolumeOfMesh;
+        if (mesh != null)
+        {
+            float volume = VolumeOfMesh(mesh);
+            float density = mass / volume;
+
+            densityCounter.text = "Density: " + density.ToString();
+            massCounter.text = "Mass: " + mass.ToString();
+            volumeCounter.text = "Volume: " + volume.ToString();
+        }
     }
 }
